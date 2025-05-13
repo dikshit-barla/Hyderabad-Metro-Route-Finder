@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyderabad Metro Route Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff4757;
+            --text-color: #2d3436;
+            --light-gray: #dfe6e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--text-color);
+        }
+
+        .metro-header {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .metro-header h1 {
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin: 0;
+            text-align: center;
+        }
+
+        .metro-header p {
+            text-align: center;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .station-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .station-select {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select {
+            border-radius: 10px;
+            padding: 0.8rem;
+            border: 2px solid var(--light-gray);
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+
+        .btn-find-route {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 200px;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        .btn-find-route:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .route-card {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-top: 2rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        .route-card .card-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .route-card .card-body {
+            padding: 2rem;
+        }
+
+        .route-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-box {
+            background: var(--secondary-color);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-box i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .path-display {
+            background: var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+
+        .station-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+
+        .station-arrow {
+            color: var(--primary-color);
+            margin: 0 5px;
+        }
+
+        @media (max-width: 768px) {
+            .route-info {
+                grid-template-columns: 1fr;
+            }
+
+            .metro-header h1 {
+                font-size: 2rem;
+            }
+
+            .station-card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="metro-header">
+        <div class="container">
+            <h1><i class="fas fa-train"></i> Hyderabad Metro Route Finder</h1>
+            <p>Find the shortest route between any two metro stations</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="station-card fade-in">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="station-select">
+                        <label for="sourceStation" class="form-label">
+                            <i class="fas fa-map-marker-alt"></i> Source Station
+                        </label>
+                        <select class="form-select" id="sourceStation">
+                            <option value="">Select Source Station</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="station-select">
+                        <label for="destinationStation" class="form-label">
+                            <i class="fas fa-map-marker"></i> Destination Station
+                        </label>
+                        <select class="form-select" id="destinationStation">
+                            <option value="">Select Destination Station</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-find-route" onclick="findRoute()">
+                <i class="fas fa-search"></i> Find Route
+            </button>
+        </div>
+
+        <div class="route-card fade-in" id="routeResult">
+            <div class="card-header">
+                <i class="fas fa-route"></i> Route Details
+            </div>
+            <div class="card-body">
+                <div class="route-info" id="routeInfo">
+                    <!-- Will be filled by JavaScript -->
+                </div>
+                <div class="path-display" id="pathDisplay">
+                    <!-- Will be filled by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="metro.js"></script>
+</body>
+</html>
